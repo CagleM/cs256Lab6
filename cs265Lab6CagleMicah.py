@@ -4,7 +4,7 @@ genEdCategories = {"Creativity and Innovation" : ["ART-133", "ART-291", "ENG-105
                    "Equity, Diversity, and Inclusion": ["ART-450", "ENG-214", "ES-220", "GSWS-312","MUS-205"],
                    "Inquiry and Analysis": ["GSWS-300", "ES-200", "ENG-280", "BI-101", "COMM-482"],
                    "Numerical Literacy": ["CS-200", "MTH-111", "CS-346", "STAT-243z"],
-                   "Purposeful Learning": ["WR-121z","WR-122z", "WR-123"],
+                   "Purposeful Learning": ["WR-121Z","WR-122Z", "WR-123"],
                    "Uncategorized": []}
 
 # Sample transcript of unorganized courses
@@ -36,12 +36,34 @@ def parseCourseRecord(courseString):
     
 """---------------------------------------------Break Line For Clarity----------------------------------------------------"""    
 
+
+def getGenEdCategory(courseCode, genEdMapping):
+    """
+    This function will determine which Gen Ed category a course belongs to. 
+    
+    Parameters:
+    courseCode (str): the parsed course code from the transcript.
+    genEdMapping (dict): a dict of gen ed categories and corresponding course titles.
+    
+    Returns:
+    The category name (str)
+    """
+    
+    for category, course in genEdMapping.items():
+        if courseCode in course:
+            return category
+        else:
+            continue
+
+
+"""---------------------------------------------Break Line For Clarity----------------------------------------------------"""
+
     
 def main(genEdCategories, transcript):
     """ 
     Runs tests at the moment.
     
-    Parameters:
+    Parameters: (for testing, not sure if needed for final submission)
     genEdCategories (dict): A sample dict of gen ed categories and corresponding course titles
     transcript (tuple): A sample transcript of unorganized course strings
     
@@ -49,12 +71,37 @@ def main(genEdCategories, transcript):
     """
     # Initialize empty list to hold parsed courses
     parsedCourse = []
-    
     # Loop though each course and parse
     for course in transcript:
         parsedCourse.append(parseCourseRecord(course))
+        
+    # #print for testing
+    # print(parsedCourse)
     
-    #print for testing
-    print(parsedCourse)
+    
+    
+    
+    # Initialize empty dict to hold courses organized by category
+    categorizedCourses = {}
+    # Loop through each course and determine the gen ed category
+    for course in parsedCourse:
+        category = getGenEdCategory(course["code"], genEdCategories)
+        if category is None:
+            category = "Uncategorized"
+        
+        # Print the course code for testing purposes
+        print(f"Course Code: {course['code']}, Category: {category}")
+        
+        # Puts each course into a dict with the key as the category and the value as a list of courses in that category
+        if category not in categorizedCourses:
+            categorizedCourses[category] = []
+            categorizedCourses[category].append(course["code"])
+
+        else:
+            categorizedCourses[category].append(course["code"])
+        
+    # Print the categorized courses for testing purposes
+    print(categorizedCourses)
+
 
 main(genEdCategories, transcript)

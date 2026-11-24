@@ -58,6 +58,40 @@ def getGenEdCategory(courseCode, genEdMapping):
 
 """---------------------------------------------Break Line For Clarity----------------------------------------------------"""
 
+
+def auditCredits(studentBins):
+    """
+    This function will calculate total completed credits per Gen Ed category using the studentBins. 
+    
+    Parameter:
+    studentBins (dict): keys: (str) Gen Ed category names (+uncategorized) and values: (list) course dicts containging keys:"code", "name", "credits", and "status".
+    
+    Returns:
+    A dict with keys as Gen Ed category names and values as the total completed credits for each category.
+    """
+    # Initialize dict to hold total completed credits per category
+    completedCredits = {"Creativity and Innovation" : 0,
+                   "Communication and Expression": 0,
+                   "Equity, Diversity, and Inclusion": 0,
+                   "Inquiry and Analysis": 0,
+                   "Numerical Literacy": 0,
+                   "Purposeful Learning": 0,
+                   "Uncategorized": 0}
+    # Loop through each category and calculate total completed credits
+    for category, courses in studentBins.items():
+        totalCredits = 0
+        for course in courses:
+            if course["status"] == "COMPLETED":
+                totalCredits += course["credits"]
+                completedCredits[category] = totalCredits
+            else:
+                completedCredits[category] = totalCredits
+                
+    return completedCredits
+
+
+"""---------------------------------------------Break Line For Clarity----------------------------------------------------"""
+
     
 def main(genEdCategories, transcript):
     """ 
@@ -89,19 +123,23 @@ def main(genEdCategories, transcript):
         if category is None:
             category = "Uncategorized"
         
-        # Print the course code for testing purposes
-        print(f"Course Code: {course['code']}, Category: {category}")
+        # # Print the course code for testing purposes
+        # print(f"Course Code: {course['code']}, Category: {category}")
         
         # Puts each course into a dict with the key as the category and the value as a list of courses in that category
         if category not in categorizedCourses:
             categorizedCourses[category] = []
-            categorizedCourses[category].append(course["code"])
+            categorizedCourses[category].append(course)
 
         else:
-            categorizedCourses[category].append(course["code"])
+            categorizedCourses[category].append(course)
         
-    # Print the categorized courses for testing purposes
-    print(categorizedCourses)
+    # # Print the categorized courses for testing purposes
+    # print(categorizedCourses)
+    
+    
+    # Audit Credits (printed for testing)
+    print(auditCredits(categorizedCourses))
 
 
 main(genEdCategories, transcript)

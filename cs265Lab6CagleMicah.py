@@ -10,7 +10,7 @@ genEdCategories = {"Creativity and Innovation" : ["ART-133", "ART-291", "ENG-105
 # Sample transcript of unorganized courses
 transcript = ( "    MTH-111, Pre-calculus, 4, COMPLETED    ",
     "  WR-121z, Composition I, 3, Completed   ",
-    "  WR-122z,  Composition II, 3, Incomplete   ",
+    "  WR-122z,  Composition II, 3, incomplete   ",
     "     GSWS-210, Violence Prevention, 4, completed")
 
 
@@ -92,6 +92,47 @@ def auditCredits(studentBins):
 
 """---------------------------------------------Break Line For Clarity----------------------------------------------------"""
 
+
+def binStudentCourses(transcript, genEdMap): # 
+    """
+    This function will group completed courses into lists under their respective Gen Ed category keys.
+    
+    Parameters:
+    transcript (list of dicts): The parsed course record of the student where the items are dicts: keys: identifers, values: corresponding identifiers
+    genEdMapping (dict): keys: categories, values: list of courses corresponding to the category
+    
+    Returns:
+    A dict where keys: Ged Ed categories, values: lists are ("course code (str)", "credits (int)")
+    """
+    #Initialize dict
+    binnedDict = {"Creativity and Innovation" : [],
+                   "Communication and Expression": [],
+                   "Equity, Diversity, and Inclusion": [],
+                   "Inquiry and Analysis": [],
+                   "Numerical Literacy": [],
+                   "Purposeful Learning": [],
+                   "Uncategorized": []}
+    #Initialize Parsed Courses List
+    parsedCourse = []
+    #Loop through each course, parse and put in designated bin
+    for string in transcript:
+        parsedCourse.append(parseCourseRecord(string))
+    for course in parsedCourse:
+        if course["status"] == "COMPLETED":
+            category = getGenEdCategory(course["code"], genEdMap)
+            courseCodeAndCredits = (course["code"], course["credits"])
+            binnedDict[category].append(courseCodeAndCredits)
+            
+    return binnedDict
+        
+        
+        
+    
+
+
+"""---------------------------------------------Break Line For Clarity----------------------------------------------------"""
+
+
     
 def main(genEdCategories, transcript):
     """ 
@@ -103,11 +144,11 @@ def main(genEdCategories, transcript):
     
     No returns
     """
-    # Initialize empty list to hold parsed courses
-    parsedCourse = []
-    # Loop though each course and parse
-    for course in transcript:
-        parsedCourse.append(parseCourseRecord(course))
+    # # Initialize empty list to hold parsed courses
+    # parsedCourse = []
+    # # Loop though each course and parse
+    # for course in transcript:
+    #     parsedCourse.append(parseCourseRecord(course))
         
     # #print for testing
     # print(parsedCourse)
@@ -115,31 +156,35 @@ def main(genEdCategories, transcript):
     
     
     
-    # Initialize empty dict to hold courses organized by category
-    categorizedCourses = {}
-    # Loop through each course and determine the gen ed category
-    for course in parsedCourse:
-        category = getGenEdCategory(course["code"], genEdCategories)
-        if category is None:
-            category = "Uncategorized"
+    # # Initialize empty dict to hold courses organized by category
+    # categorizedCourses = {}
+    # # Loop through each course and determine the gen ed category
+    # for course in parsedCourse:
+    #     category = getGenEdCategory(course["code"], genEdCategories)
+    #     if category is None:
+    #         category = "Uncategorized"
         
         # # Print the course code for testing purposes
         # print(f"Course Code: {course['code']}, Category: {category}")
         
-        # Puts each course into a dict with the key as the category and the value as a list of courses in that category
-        if category not in categorizedCourses:
-            categorizedCourses[category] = []
-            categorizedCourses[category].append(course)
+    #     # Puts each course into a dict with the key as the category and the value as a list of courses in that category
+    #     if category not in categorizedCourses:
+    #         categorizedCourses[category] = []
+    #         categorizedCourses[category].append(course)
 
-        else:
-            categorizedCourses[category].append(course)
+    #     else:
+    #         categorizedCourses[category].append(course)
         
-    # # Print the categorized courses for testing purposes
-    # print(categorizedCourses)
+    # # # Print the categorized courses for testing purposes
+    # # print(categorizedCourses)
     
     
-    # Audit Credits (printed for testing)
-    print(auditCredits(categorizedCourses))
+    # # Audit Credits (printed for testing)
+    # print(auditCredits(categorizedCourses))
+    
+    
+    #print the function for testing
+    print(binStudentCourses(transcript, genEdCategories))
 
 
 main(genEdCategories, transcript)
